@@ -1,0 +1,53 @@
+# Options
+
+- Line width
+
+  Sometimes the R code needs to know the line width for proper alignment, therefore
+  it is recommended to use `pplinewidth()` rather than `psset("linewidth=…").
+
+- Label separation
+
+  The default distance between the tick labels and the axis label is usually reasonable
+  for the `x` axis, but for the `y` axis it depends on the space taken up by the tick
+  labels, which is not taken into account automatically. See `ppsetxlabsep()`
+  (alias `ppxlabsep()`), `ppsetylabsep()` (alias `ppylabsep()`) to specify such
+  distances.
+
+- Log scales
+
+  Various functions are available to specify logarithmic axes, see
+  `ppsetlogx()`, `ppsetlogy()`, `ppsetlogxy()`, `ppsetnologx()`, `ppssetnology()`, `ppsetnologxy()`.
+  For examples, see "examples/nainf.R" and "examples/ticks.R".
+
+- Secondary axes
+
+  Secondary axes (at the right side or at the top, or primary axes at the left side or the bottom) may be selected by using `ppsetprimaryx()`, `ppsetprimaryy()`, `ppsetprimary()`, `ppsetsecondaryx()`, `ppsetsecondaryy()`, `ppsetsecondary()`. See "examples/secondary.R" for an example.
+
+- Special coordinates
+
+  PSTricks' macro `SpecialCoor` has not been wrapped, but with the functions
+  `ppsetpolar()`, `ppsetcartesian()`, and `degrees()`,
+  its functionality is partly available.
+
+- Margins
+
+  The location of axes in a subplot depends on an overall parameter
+  "margin" and a factor "mrgaxes", see `ppsetmargins()`. Note that with
+  a small margin, axis ticks and labels may be drawn outside of the subplot.
+
+- PSTtoEPS
+
+  The "PSTtoEPS" feature may be used to handle a large amounts of graphic
+  objects (see Section 55 of the original documentation). The functions that
+  handle this are `startP2E()` and `endP2E()` that may be called from `ppgeoms()`
+  when this is requested by `ppsetpsttoeps()`. See "examples/psttoeps*.R" for
+  examples and `PSTricks()` for a description of the "tmpdir" attribute.
+  "tmpdir" is ideally "/tmp", but TeX is not allowed to write there by default;
+  it needs "openout_any = a" in "texmf.cnf".
+
+- `ppaxis()`
+
+  Sometimes the geoms provide insufficient flexibility and the axes need to be
+  drawn manually. See the main documentation for the options of `ppaxis()`. An
+  obscure option is "noshow": the data will be scaled as if an axis is present,
+  but the axis is not drawn - see "examples/noshow.R".

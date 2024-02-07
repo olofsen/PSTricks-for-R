@@ -1,0 +1,23 @@
+# Pictures
+
+The `pspicture` environment creates space for a picture in the LaTeX document.
+The `pspicture()` wrapper function is available, as is a higher level
+function `pppicture()`, which sets many additional PSTricks attributes
+used by higher level plotting functions to initial values.
+`endpppicture()` will be automatically called when needed;
+`endpspicture()` will not. See the `pspicture()` documentation,
+and the previous chapter, for examples.
+
+By default, `pppicture()` allocates the whole page; if a size is specified,
+the picture will be centered on the page (unless specified otherwise).
+`ppnewpage()` may be called to
+start a new page; a new pppicture will be centered the same as the first one.
+A new pppicture will reset the lower and higher level option values to
+default ones; see "examples/resetoptions.R".
+
+The `x` and `y` arguments of `pppicture()` may be vectors with length two,
+and the first elements may be negative, although this is not very useful
+with the higher level functions
+
+`pppicture()` adds a "geoms" attribute to the PSTricks object,
+where `geom_*()` calls will be collected, see Chapter \@ref(geoms).

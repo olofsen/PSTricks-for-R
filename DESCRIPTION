@@ -1,0 +1,30 @@
+Package: PSTricks
+Title: PSTricks, bindings for LaTeX's PSTricks package
+Version: 0.1.0
+Authors@R:
+    person("Erik", "Olofsen", , "e.olofsen@weggetjes.nl", role = c("aut", "cre"))
+Description: PSTricks provides R bindings for LaTeX's PSTricks package, higher level plot commands, the capability of generating a complete .tex file, and compiling it to a .pdf file.
+License: GPL (>= 3)
+Depends:
+  R (>= 3.5.0)
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Imports:
+    grDevices,
+    magrittr,
+    fs,
+    scriptName,
+    methods,
+    tools,
+    rconfig
+NeedsCompilation: no
+Packaged: 2023-09-10 20:27:40 UTC; olofsen
+Author: Erik Olofsen [aut, cre]
+Maintainer: Erik Olofsen <e.olofsen@weggetjes.nl>
+Suggests:
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+VignetteBuilder: knitr

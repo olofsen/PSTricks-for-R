@@ -1,0 +1,26 @@
+# The Document
+
+The last example of the previous chapter creates the following
+LaTeX document:
+
+```{r}
+print(geom_dots(PSTricks(),aes(x=wt,y=mpg),mtcars),"test",topdf=FALSE)
+cat(system("cat test.tex",intern=TRUE),sep='\n')
+```
+
+The document lines are held in the "lines" attribute of a PSTricks object,
+and written to a .tex file when the object is printed.
+
+The package provides functions to open and close a document
+(`ppopendoc()` and `ppclosedoc()`), but these are called automatically
+when needed.
+
+The arguments of the `PSTricks()` function allow for some control
+of the preamble.
+
+By default, a picture is centered by using horizontal and vertical
+offset parameters.
+
+A "pspicture" environment is created (see the next Chapter)
+automatically in this case, with a default size, and the `geom_dots()`
+function is responsible for the necessary basic PSTricks macro calls.

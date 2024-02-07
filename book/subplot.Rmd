@@ -1,0 +1,25 @@
+# Subplots
+
+By using subplots, the available space on the paper,
+as determined by `pppicture()`, is divided
+in a number plot columns and a number of plot rows.
+
+`ppsubplot()` determines some parameters for axes
+that are to be drawn (manually or automatically).
+
+See "examples/subplot.R" and "examples/subplotl.R".
+
+`ppmansubplot()` may be used to place a subplot manually anywhere
+on the paper, rather than being determined by numbers of columns
+and rows.
+
+`ppsubplot()` without specifying the numbers of
+columns and rows will automatically move to the
+next subplot. If the page is full, `ppnewpage()` will
+be called automatically.
+
+The length of the axes are determined by the space
+within a subplot. The functions `xaspect()`, `yaspect()`,
+and `xyaspect()` may be used to calculate the dimensions of
+the picture to have a certain aspect ratio of
+the axes.

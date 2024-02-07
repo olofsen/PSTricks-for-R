@@ -1,0 +1,110 @@
+# Geoms
+
+Geoms may be used to have automatic scaling of data values to
+coordinates on the paper. Limits of `x` and `y` data are updated each
+time a `geom` is called and when next axes are drawn, these should
+accommodate all data (ranges). In subsequent steps the axes may be
+optimized by specifying nicer values for the limits.
+
+The source data is specified by the "data" argument of
+`pppicture()`, `ppsubplot()`, or any geom.
+
+Apart from the "data" argument, the "mapping" argument is a characteristic
+element of drawing with geoms. The mapping is specified (as with "ggplot2")
+using the `aes()` function.
+
+This section lists the available geoms and associated functions; their
+actual usage may be found in their example sections in the main
+documentation.
+
+The "arrows" argument is not implemented, but these may be set using "par".
+
+## `aes()`
+
+The geoms try to find variables in the data with names such as `x` and `y`.
+These may be given different names using for mappings such as for
+example `aes(x=time)`. Like with the data, a mapping may be specified at the geom, or
+globally at `pppicture()` or `ppsubplot()`.
+
+So if `x` is sought, it will be checked it if can be obtained via the mapping
+specified with the geom. If that fails, the global mapping will be checked.
+If that fails, it will be checked if the variable `x` is present in the dataset
+without a mapping.
+
+The arguments of `aes()` can only be simple name mappings, functions such
+as in `aes(x=fun(x))` will not be evaluated. Also, factors as arguments,
+for example as a way to determine line colors will not be handled.
+
+On the other hand, for some functions arguments like `par` may have a single value, or
+`par` may be available as a variable in the data set with the same length as the `x` data.
+This is possible if such arguments are given in the geoms listed below.
+
+It is not available for functions like `geom_line()`; multiple lines
+with for example different colors need to be specified via different columns in
+the data set (or different data sets).
+
+## Settings
+
+Geom calls are collected in a list which are called at the end of a plot
+(by `ppgeoms()`, see below). Therefore, if for example `psset()` is called
+a few times, only the last one would have effect when the list is evaluated,
+and it could affect the drawing of the axes.
+If settings should be synchronized with geom calls, the following functions
+may be used: `geom_set()`, `geom_linewidth()`, `geom_everypsbox()`.
+
+## Line geoms
+
+The following functions are available that call the
+underlying macros: `geom_line()`, `geom_polygon`, `geom_frame(,par,star)`,
+`geom_curve()`, `geom_ecurve()`, `geom_ccurve()`.
+
+Geoms that plot `y` versus `x` data usually remove NAs en negative numbers
+when using a logarithmic axis, see "examples/nainf.R".
+
+## Dot geoms
+
+Available is: `geom_dots(,par,star)`.
+
+## Text geoms
+
+Available are: `geom_framebox(,par,refpoint,rotation,star)`, `geom_rput(,refpoint,rotation,star)`, `geom_uput(,refangle,rotation,labelsep,star)`.
+
+
+## Expansions
+
+In addition, the following "ggplot2" style functions are available:
+
+- `geom_abline()`, `geom_hline()`, `geom_vline()`,
+  `geom_errorbar()`, `geom_hist()`,
+  `geom_legend()`, `geom_grid()`.
+
+- Setting axis limits
+
+See `xlim()`, `ylim()`, `lims()`.
+
+- Setting an axis label
+
+See `xlab()`, `ylab()`, `labs()`.
+
+### A note about `geom_errorbar()`
+
+`geom_errorbar` has the option of one-sided intervals. Normally `ymin`
+and `ymax` will be located, but other options are `y` and `ymax`, and
+`ymin` and `y`. These may be specified in the mapping. However if the
+missing variable of these three possibilities is present in the data, for
+example `ymin` is present although `y` and `ymax` are specified,
+`ymin` will be found and a two-sided interval will be plotted.
+This may be prevented by explicitly writing "aes(ymin=NA)".
+
+## Explicitly finishing a plot
+
+A plot is finished by the `ppgeoms()` function, which determines
+data limits, draws the axes, and data visualizations. The function
+is called automatically when a plot is printed or when a new subplot
+is started.
+
+If something really weird happens, this may be caused by the geoms
+being evaluated later than expected. Calling `ppgeoms()` explicitly at
+the end of a subplot may help. One case where this is needed is when
+data with multiple (primary and secondary) axes are plotted. See
+the example in the main documentation.

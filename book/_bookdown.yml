@@ -1,0 +1,20 @@
+book_filename: "PSTricksBook"
+language:
+  ui:
+    chapter_name: "Chapter "
+delete_merged_file: true
+rmd_files:
+- index.Rmd
+- vignette.Rmd
+- object.Rmd
+- document.Rmd
+- pstricks.Rmd
+- picture.Rmd
+- subplot.Rmd
+- axes.Rmd
+- geoms.Rmd
+- options.Rmd
+- print.Rmd
+- examples.Rmd
+- wikipedia.Rmd
+- postscript.Rmd

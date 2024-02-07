@@ -1,0 +1,111 @@
+# The Examples on Wikipedia
+
+## Example 1
+
+```{r,cache=TRUE}
+p <- PSTricks() %>%
+    pppicture(5, 5) %>%
+    pspolygon(c(1,5,1), c(1,1,4), "linecolor=red") %>%
+    pscurve(c(5,3,4,2), c(5,2,4,3), "linecolor=green,linewidth=2pt,
+                                     showpoints=true") %>%
+    pscircle(3, 2.5, 1, "linecolor=blue,linestyle=dashed")
+
+print(p, "wiki-example1", topng=TRUE)
+```
+```{r,echo=FALSE,fig.align="center"}
+knitr::include_graphics("wiki-example1.png")
+```
+
+## Example 2
+
+pst-plot is, by design, not supported.
+The main purpose of the PSTricks package for R is
+that data generated in R can be visualized, rather that functions are plotted
+using PostScript itself.
+
+
+```{r,cache=TRUE}
+data <- data.frame(x=seq(-7,7,0.1))
+data$y <- sin(data$x)
+
+p <- PSTricks() %>%
+    pppicture(16, 6, data) %>%
+    geom_line(par="linecolor=blue") %>%
+    geom_abline(0, -1, "linestyle=dotted") %>%
+    geom_abline(0, 0, "linestyle=dotted") %>%
+    geom_abline(0, 1, "linestyle=dotted") %>%
+    xlim(-7,7) %>% ylim(-1,1) %>%
+    xticks(3,6) %>% yticks(3,1) %>%
+    xlab("") %>% ylab("") %>%
+    ppgeoms()
+
+y <- cy(p, -Inf)
+yt <- y - p$xticks$ticklength
+
+x <- cx(p, -pi)
+p <- psline(p, c(x,x), c(y,cy(p,0)), "linestyle=dotted,linecolor=red") %>%
+     uput(x, yt, "$-\\pi$", 'd')
+
+x <- cx(p, -pi/2)
+p <- psline(p, c(x,x), c(y,cy(p,-1)), "linestyle=dotted,linecolor=red") %>%
+     uput(x, yt, "$-\\frac{\\pi}{2}$", 'd')
+
+x <- cx(p, 0)
+p <- psline(p, c(x,x), c(y,cy(p,0)), "linestyle=dotted")
+
+x <- cx(p, pi/2)
+p <- psline(p, c(x,x), c(y,cy(p,1)), "linestyle=dotted,linecolor=red") %>%
+     uput(x, yt, "$\\frac{\\pi}{2}$", 'd')
+
+x <- cx(p, pi)
+p <- psline(p, c(x,x), c(y,cy(p,0)), "linestyle=dotted,linecolor=red") %>%
+     uput(x, yt, "$\\pi$", 'd')
+
+print(p, "wiki-example2", topng=TRUE)
+```
+```{r,echo=FALSE,fig.align="center"}
+knitr::include_graphics("wiki-example2.png")
+```
+
+## Example 3
+
+Also `multido` is not implemented, because R's looping commands are available.
+
+```{r,cache=TRUE}
+data <- data.frame(x=pi*seq(0,1,0.01))
+data$y <- sin(data$x)
+
+p <- PSTricks() %>%
+    pppicture(16, 6, data) %>%
+    lims(c(0,3.4), c(0,1)) %>%
+    ticks(18, 2) %>%
+    labs("", "")
+
+p <- geom_line(p, par="linecolor=blue")
+
+data$yp <- data$y^100
+p <- geom_line(p, aes(x=x,y=yp), data=data, "linecolor=blue")
+
+for (i in 2:25) {
+    data$yp <- data$y^i
+    p <- geom_line(p, aes(x=x,y=yp), data=data, "linecolor=green")
+}
+
+p <- geom_line(p, data=list(x=c(0,pi,pi),y=c(1,1,0)), par="linestyle=dotted")
+
+p <- geom_line(p, data=list(x=c(0,rep(pi/2,3),pi),y=c(0,0,1,0,0)),
+               par="linestyle=dashed,linecolor=red")
+
+p <- geom_dots(p, data=list(x=pi/2,y=1), par="linecolor=red,dotsize=5pt")
+
+labels <- list(x=c(0.4,1.75), y=c(sin(0.4),sin(1.75)^100),
+               stuff=c("\\blue $sin(x)$","\\blue $sin^{100}(x)$"),
+               refangle=c('l','r'))
+
+p <- geom_uput(p, data=labels)
+
+print(p, "wiki-example3", topng=TRUE)
+```
+```{r,echo=FALSE,fig.align="center"}
+knitr::include_graphics("wiki-example3.png")
+```

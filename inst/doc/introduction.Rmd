@@ -1,0 +1,99 @@
+---
+title: "The PSTricks for R Package"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{The PSTricks for R Package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Using the library
+
+```{r setup}
+library(PSTricks)
+```
+
+## The original line drawing example
+
+Drawing is done by creating a PSTricks object, a picture, and a line or
+another graphical object:
+```{r}
+p <- PSTricks() %>%
+    pppicture(4,2,par="showgrid=true") %>%
+    psline(c(4,0,2), c(2,1,0), "linewidth=2pt,linearc=.25", "->")
+```
+Calling `print` will create a .tex file with the PStricks line macro,
+run LaTeX to create a .pdf and a .png to be included in the
+present vignette:
+```{r}
+print(p, "intro-psline", topng=TRUE)
+```
+```{r,echo=FALSE,fig.align="center"}
+knitr::include_graphics("intro-psline.png")
+```
+Note the name `pppicture` instead of the original name `pspicture`.
+
+## Axes and scaling
+
+One main advantage of using R instead of plain LaTex is the fact
+that variables may be created in R.
+Furthermore, for general plots, there is a `ppaxis` command to
+create axes which allows for more control than the original `psaxis`
+macro.
+```{r, fig.align="center"}
+x <- c(4,0,2)
+y <- c(2,1,0)
+
+p <- PSTricks() %>%
+    pppicture(16,9,par="showgrid=true") %>%
+    ppaxis('x', c(0,4), label='\\large x label') %>%
+    ppaxis('y', c(0,2), label='\\large y label')
+
+# p, needed for the scaling conversion functions `cx` and `cy` below,
+# contains only the the necessary information after p has been assigned
+# as in the previous statement
+
+p <- p %>%
+    psline(cx(p,x), cy(p,y), "linewidth=2pt,linearc=.25", "->") %>%
+    pptitle("\\Large title")
+
+print(p, "intro-basic", topng=TRUE)
+```
+```{r,echo=FALSE,fig.align="center"}
+knitr::include_graphics("intro-basic.png")
+```
+
+## ggplot-like geoms
+
+"geoms" like `geom_line` (similar but not identical to the one in the
+"ggplot2" package) perform implicit conversions from the `x` and `y`
+items in `data` to coordinates on the paper, and determine the limits of the data
+in these variables. Axes are drawn automatically.
+The non-geom functions in the sequence do not depend on `data`.
+```{r, fig.align="center"}
+data <- data.frame(x=c(4,0,2),y=c(2,1,0))
+
+PSTricks() %>%
+    pppicture(16,9, data=data) %>%
+    everypsbox("\\large") %>%
+    geom_line(par="linewidth=2pt,linearc=.25,arrows=->") %>%
+    xlab("x label") %>%
+    ylab("y label") %>%
+    pptitle("\\Large title") %>%
+    print("intro-newstyle", topng=TRUE)
+```
+```{r,echo=FALSE,fig.align="center"}
+knitr::include_graphics("intro-newstyle.png")
+```
+
+## Further information
+
+- The package documentation: almost all functions have examples
+- The booklet: PSTricksBook.pdf

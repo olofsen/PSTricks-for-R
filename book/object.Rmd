@@ -1,0 +1,105 @@
+# The `PSTricks` object
+
+After installation, a first test could be, within R:
+```{r}
+names(PSTricks::PSTricks())
+```
+
+`PSTricks()` returns an (S3) object with various attributes. The
+"lines" attribute will contain the LaTeX code lines. The attributes
+are manipulated by the various PSTricks functions and normally need
+not be accessed directly.  See the documentation of the `PSTricks()`
+function for a short description of the shown attributes of the
+`PSTricks` object.
+
+Next, to see if running LaTeX works:
+```{r eval=FALSE}
+PSTricks::PSTricks()
+```
+However, because the document is empty, no .pdf will be generated.
+
+To be able to view the generated "pp.tex" file:
+```{r}
+print(PSTricks(),"test",topdf=FALSE)
+cat(system("cat test.tex",intern=TRUE),sep='\n')
+```
+
+A test that should give a .pdf (called "pp.pdf" if run in an
+R session rather than a script):
+```{r}
+geom_dots(PSTricks(),aes(x=wt,y=mpg),mtcars)
+```
+```{r,echo=FALSE,fig.align="center"}
+knitr::include_graphics("renderbook.pdf")
+```
+
+\newpage
+The output is one or more whole pages by default, that is,
+a picture is not "cropped" (see Chapter \@ref(printing)).
+
+## Flow of `PSTricks` objects
+
+- Creating an object:
+
+```{r eval=FALSE}
+p <- PSTricks()
+```
+
+See the main documentation for a description of the arguments
+of `PSTricks()`.
+
+- Modifying attributes:
+
+```{r eval=FALSE}
+p <- function(p, ...)
+```
+
+- Modifying using pipes (automatically imported from the "magritrr" package):
+
+```{r eval=FALSE}
+p <- p %>%
+    functionA(...) %>%
+    functionB(...)
+```
+
+- Printing the assembled information:
+
+```{r eval=FALSE}
+print(p)
+```
+
+See Chapter \@ref(printing) for the latter.
+
+## Messages
+
+Errors with piping the PSTricks object may cause confusing error messages;
+for example, with
+
+```{r eval=FALSE}
+p <- p %>%
+    functionA(...) %>%
+    functionB(...) %>%
+
+print(p)
+```
+`p` will be the first and second argument of `ppwrite()`, and the latter function
+expects a string as the second argument.
+
+See also directory "examples/errors/".
+
+## Returning a string from a wrapped PSTricks macro
+
+Most functions add a line to the "lines" attribute of the PSTricks object,
+and to access that attribute, the object variable ("p" in the above) has
+to be available.
+
+Some PSTricks macro calls are nested, so that sometimes the macro call
+as a string is needed and that string should not be appended to the lines
+attribute. To allow this, the object may be specified as NULL, which
+is the default if possible, so for example:
+
+```{r}
+psline(,c(1,2),c(3,4))
+```
+
+See Chapter \@ref(postscript) for a complex example.

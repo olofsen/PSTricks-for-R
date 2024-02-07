@@ -1,0 +1,112 @@
+# Basic PSTricks Objects
+
+So drawing is done by creating a PSTricks object, a picture, and a line or
+another graphical object:
+
+```{r}
+PSTricks() %>%
+    pspicture(4,2, par="showgrid=true") %>%
+    psline(c(4,0,2), c(2,1,0), "linewidth=2pt,linearc=.25", "->") %>%
+    endpspicture() %>%
+    print("pstricks-psline", topng=TRUE)
+```
+```{r,echo=FALSE,fig.align="center"}
+knitr::include_graphics("pstricks-psline.png")
+```
+
+From a puristic viewpoint, `pspicture()` with `endpspicture()` are
+used with basic PSTricks macros. In most examples with the present
+package, `pppicture()` is used to avoid all `endppictures()` in the
+example code. Also, in this example, `pspicture()` is not strictly
+mandatory because with the "topng" option, the output will be cropped
+(otherwise the size will be a whole page).
+
+## Arguments
+
+With `psline` as an example, the original syntax is
+
+```{r,eval=FALSE}
+\psline*[par]{arrows}(x0,y0)(x1,y1)… (xn,yn)
+```
+
+In R, the definition is:
+
+```{r,eval=FALSE}
+psline <- function(p=NULL, x, y, par=NULL, arrows=NULL, star=FALSE) { … }
+```
+
+So the nice delimiters with the macros ('{arg}', '[arg]', '(x,y)') could
+unfortunately not be retained.
+
+Importantly, all `x` and `y` values are combined in vectors, the most
+often used argument "par" follows, and the less used "arrows" and
+"star" are at the end. This often saves the typing of "par=…".  If an
+argument is NULL, it will not be added to the macro call.  The unit of
+a number is usually "cm", but sometimes parameters, usually those that
+are not `x` or `y` and are passed unmodified to the PSTricks macros,
+may contain a unit and for example "pt" or "mm" may be specified.
+
+As may be expected, `?psline` at the R prompt shows the function definition.
+
+## Wrappers
+
+Almost all basic PSTricks macros have been wrapped. Most additional
+PSTricks packages have not been layered. Documentation "pst-user.pdf"
+has been used as the main reference. All the information about `par`
+is as is, as this it is just a string. Some comments regarding specific sections:
+
+- 2: additional function `ppnewrgbcolor()` which handles R color specifications
+- 4: `pssettolength` and `psaddtolength` not wrapped
+- 6: later macro `\psTextFrame` wrapped
+- 7: later macro `\pscircleOA` wrapped
+- 11: "pst-plot" not layered (except `psaxes()`), although `\fileplot`
+      is used by `*P2E(fileplot=TRUE)`
+- 23: `\KillGlue` and `\DontKillGlue` not wrapped
+- 25: "multido" not layered
+- 30: "pst-node" layered (see example below)
+- 35: `\psmatrix` not layered
+- 37: "pst-tree" not layered
+- 46: "pst-fill" not layered
+- 47: "pst-3d" not layered
+- 48: "pst-coil" layered
+- 49: `\SpecialCoor` not layered, but see Chapter \@ref(options).
+- 50: overlays not layered
+- 51: "pst-grad" not layered
+- 52: "pst-text" not layered
+- 53: "pst-char" not layered
+- 55: "pst-eps" partly layered, see Chapter \@ref(options).
+- A: `everypsbox()` wrapped
+
+## ppappend
+
+If a wrapper function is not available, the macro or any other LaTEX command may
+be supplied as a string to the `ppappend()` function which adds the argument
+string to the "lines" attribute of the `PSTricks` object.
+
+## pst-node
+
+Also for the additional PSTricks package "pst-node" calling the macros
+from R may be useful, because even though node names replace coordinates,
+calculations on the node defining coordinates are possible, as in the
+following example. Not the addition of "pst-node" to the "pstpkgs"
+argument of `PSTricks()`.
+
+```{r,cache=TRUE}
+p <- pppicture(PSTricks(pstpkgs="pst-node"),8,4,par="showgrid=true")
+
+f <- function(p,x,y)
+{
+    p %>%
+        cnodeput(x,y,"A","A") %>%
+        cnodeput(x+2,y,"B","B") %>%
+        cnodeput(x+4,y,"C","C") %>%
+        ncline("A","B",arrows="->") %>%
+        ncline("B","C",arrows="->")
+}
+
+p <- p %>% f(2,3) %>% f(2,1) %>%
+    print("nodes", topng=TRUE)
+```
+```{r,echo=FALSE,fig.align="center"}
+knitr::include_graphics("nodes.png")
+```

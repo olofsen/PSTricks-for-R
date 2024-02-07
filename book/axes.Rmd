@@ -1,0 +1,168 @@
+# Axes
+
+## Axes and grids
+
+Grids are usually not shown in final graphs,
+but they may help finding values attained by for example line objects.
+
+### showgrid
+
+This option is very useful for positioning the various PSTricks objects on the paper.
+
+```{r,cache=TRUE}
+p <- pppicture(PSTricks(),c(-1,3),c(-1,2),par="showgrid=true") %>%
+    psline(c(-1,3),c(2,-1))
+
+print(p, "showgrid", topng=TRUE)
+```
+```{r,echo=FALSE,fig.align="center"}
+knitr::include_graphics("showgrid.png")
+```
+
+### psgrid
+
+While the package provides its own grid drawing functions, the original macro is available.
+
+```{r,cache=TRUE}
+p <- pppicture(PSTricks(),c(-1,3),c(-1,2)) %>%
+    psgrid(c(0,-1,3),c(0,-1,2)) %>%
+    psline(c(-1,3),c(2,-1))
+
+print(p, "psgrid", topng=TRUE)
+```
+```{r,echo=FALSE,fig.align="center"}
+knitr::include_graphics("psgrid.png")
+```
+
+### psaxes
+
+Likewise, the original macro for drawing axes is available.
+
+```{r,cache=TRUE}
+p <- pppicture(PSTricks(pstpkgs="pst-plot"),c(-1,3),c(-1,2),
+        par="showgrid=true") %>%
+    psaxes(c(0,-1,3), c(0,-1,2),
+        "linewidth=1.2pt,labels=none,ticks=none", "<->") %>%
+    psline(c(-1,3),c(2,-1))
+
+print(p, "psaxes", topng=TRUE)
+```
+```{r,echo=FALSE,fig.align="center"}
+knitr::include_graphics("psaxes.png")
+```
+
+### ppaxis and ppgrid
+
+When axes with scaling are drawn manually, a grid may be added as follows. This looks best when
+there is no space between the axes.
+
+```{r,cache=TRUE}
+p <- pppicture(PSTricks(),16,9) %>%
+    newrgbcolor("verylightgray",.9,.9,.9) %>%
+    ppsetmargins(mrgaxes=0) %>%
+    ppaxis('x',c(-1,3),"x") %>%
+    ppaxis('y',c(-1,2),"y") %>%
+    ppgrid("linestyle=dotted,linecolor=gray",background="verylightgray")
+
+p <- psline(p,cx(p,c(-1,3)),cy(p,c(2,-1)))
+
+print(p, "ppgrid", topng=TRUE)
+```
+```{r,echo=FALSE,fig.align="center"}
+knitr::include_graphics("ppgrid.png")
+```
+
+### geoms with automatic axes and geom_grid {#geomaxesgrid}
+
+The same graph as in the previous subsection may be achieved with "geoms":
+
+```{r,cache=TRUE}
+p <- PSTricks() %>%
+    newrgbcolor("verylightgray",.9,.9,.9) %>%
+    ppsetmargins(mrgaxes=0) %>%
+    geom_grid("linestyle=dotted,linecolor=gray",
+        background="verylightgray") %>%
+    geom_line(data=data.frame(x=c(-1,3),y=c(2,1)))
+
+print(p, "geom_grid", topng=TRUE)
+```
+```{r,echo=FALSE,fig.align="center"}
+knitr::include_graphics("geom_grid.png")
+```
+
+See also "examples/ggstyle.R"
+
+Note that subdivision grid lines are not implemented. Also, it is currently
+quite difficult to match the positions of the dots with the minor tickmarks.
+
+
+## Scaling and clipping
+
+So axes may be drawn manually or automatically by geoms (see also
+Chapter \@ref(geoms)).  When data are plotted manually, the data have
+to be scaled to coordinates on the paper by the functions `cx()` and
+`cy()`; geoms call these functions when needed. The drawing of the
+axes may be suppressed by the option "noshow" of `ppaxis()` but of
+course almost always the axes are a desired part of the plot.
+
+Clipping is also done by `cx()` and `cy()`, unless the starred version
+of the picture environment is used (see `pppicture()` and the original
+PSTricks documentation). `cx()` and `cy()` clip the data
+to the axes area of the subplot - this is only marginally larger than the limits of
+the axes, so sometimes this is not very conspicuous. Inf and -Inf in the data have
+a special use: these values will be clipped - see Section \@ref(example-2).
+See also "examples/pictures.R".
+
+
+## Axes and tickmarks
+
+With manually drawn axes, their limits are specified in calls to `ppaxis()`;
+with geoms these are determined automatically:
+
+```{r,cache=TRUE}
+p <- PSTricks() %>%
+    pppicture(16,9,mtcars,aes(x=wt,y=mpg)) %>%
+    ppylabsep(0.8) %>%
+    psset("dotstyle=Bo") %>%
+	geom_dots() %>%
+    xlab("Weight") %>%
+    ylab("Miles per gallon")
+
+print(p, "axis2def", topng=TRUE)
+```
+```{r,echo=FALSE,fig.align="center"}
+knitr::include_graphics("axis2def.png")
+```
+
+While the axes are such that there is a good view on
+the data, manual limits may be desirable:
+
+```{r,include=FALSE}
+p <- PSTricks() %>%
+    pppicture(16,9,mtcars,aes(x=wt,y=mpg)) %>%
+    ppylabsep(0.8) %>%
+    psset("dotstyle=Bo")
+```
+```{r,cache=TRUE}
+p <- geom_dots(p) %>%
+    xlim(1,6) %>%
+    ylim(10,35)
+
+print(p, "axis2manlim", topng=TRUE)
+```
+```{r,echo=FALSE,fig.align="center"}
+knitr::include_graphics("axis2manlim.png")
+```
+
+For automatic or manually selection of the number of major
+and minor tickmarks there are the functions
+`ppxticks()` (alias `xticks()`), `ppyticks()` (alias `yticks()`),
+`ticks()` and `ppticks()` - see the main documentation.
+
+For further examples, see "examples/ticks.R".
+
+### Strings as tick labels
+
+Sometimes the ticks need to have label strings other than
+their automatically converted numerical value - see
+for example "examples/mtcars.R".
