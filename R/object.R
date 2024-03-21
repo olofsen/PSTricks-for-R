@@ -28,6 +28,7 @@
 #' * paper - The type of paper, for example "a4" or "letter".
 #' * pstpkgs - A list of additional PSTricks packages (normally only "pstricks.sty").
 #' * tmpdir - The temporary directory for the `PSTtoEPS` feature.
+#' * gscmd - The name of the Ghostscript executable to use (default "gs").
 #' @importFrom rconfig rconfig
 #' @export
 #' @examples
@@ -62,6 +63,7 @@ PSTricks <- function(x=NULL, y=NULL,
     if (!is.null(pstpkgs)) config$pstpkgs <- pstpkgs
     if (!is.null(familydefault)) config$familydefault <- familydefault
     config$tmpdir <- sifelse(is.null(config$tmpdir),tmpdir,config$tmpdir)
+    if (is.null(config$gscmd)) config$gscmd <- "gs"
 
     if (config$paper == "letter") {
         if (landscape) {

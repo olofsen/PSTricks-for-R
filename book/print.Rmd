@@ -18,8 +18,8 @@ exits silently. The latter function does the following:
 - writes an actual .tex file;
 - calls a LaTeX engine to create a .pdf unless requested not to do so;
 - crops the .pdf if requested;
-- creates a .png if requested;
-- creates a .eps if requested (see "examples/toeps.R");
+- creates a .png if requested (requires Ghostscript and perhaps a proper setting of "gscmd" in the configuration file);
+- creates a .eps if requested (see "examples/toeps.R"; and requires the "epstool" utility);
 - cleans up unless requested not to do so.
 
 So by default, a .pdf is generated. And by default, the name is the same as the name

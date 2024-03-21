@@ -51,35 +51,48 @@ ppwrite <- function(p, filename=NULL, topdf=TRUE, crop=FALSE, topng=FALSE, dsf=4
 
     if (engine == "latex") {
 
+        sep <- sifelse(.Platform$OS.type=="windows", '#', '=')
+
         if (p$landscape) {
             if (toeps) {
-                cmd <- paste0("latex ",f," && dvips -t unknown -T ",round(p$paperx*10),"mm,",round(p$papery*10),"mm -E -o ",f,".eps ",f)
+                tmpeps <- tempfile("EPS",tmpdir=p$config$tmpdir)
+                cmds <- c(paste0("latex ",f),
+                          paste0("dvips -t unknown -T ",round(p$paperx*10),"mm,",round(p$papery*10),"mm -E -o ",tmpeps," ",f))
             } else {
-                cmd <- paste0("latex ",f," && dvips -t unknown -T ",round(p$paperx*10),"mm,",round(p$papery*10),"mm -o ",f,".ps ",f," && ps2pdf -dALLOWPSTRANSPARENCY -dAutoRotatePages=/None ",f,".ps ",f,".pdf")
+                cmds <- c(paste0("latex ",f),
+                          paste0("dvips -t unknown -T ",round(p$paperx*10),"mm,",round(p$papery*10),"mm -o ",f,".ps ",f),
+                          paste0("ps2pdf -dALLOWPSTRANSPARENCY -dAutoRotatePages",sep,"/None ",f,".ps ",f,".pdf"))
             }
         } else {
             if (toeps) {
-                cmd <- paste0("latex ",f," && dvips -E -o ",f,".eps ",f)
+                tmpeps <- tempfile("EPS",tmpdir=p$config$tmpdir)
+                cmds <- c(paste0("latex ",f),
+                          paste0("dvips -E -o ",tmpeps," ",f))
             } else {
-                cmd <- paste0("latex ",f," && dvips -o ",f,".ps ",f," && ps2pdf -dALLOWPSTRANSPARENCY -dAutoRotatePages=/None ",f,".ps ",f,".pdf")
+                cmds <- c(paste0("latex ",f),
+                          paste0("dvips -o ",f,".ps ",f),
+                          paste0("ps2pdf -dALLOWPSTRANSPARENCY -dAutoRotatePages",sep,"/None ",f,".ps ",f,".pdf"))
             }
         }
 
-        status <- system(cmd)
+## Combine exit codes
+
+        status <- sapply(cmds,system)
+        status <- sifelse(all(status==0),0,1)
 
         if (status==0 && toeps) {
             # dvips -E usually does not give a useful bounding box
-            cmd <- paste0("BBOX=`gs -sDEVICE=bbox -dNOPAUSE -dSAFER -dBATCH ",f,".eps 2>&1 | fgrep '%%BoundingBox:' -` ; sed -i -e \"s/%%BoundingBox:.*/$BBOX/\" ",f,".eps")
+            cmd <- paste0("epstool --bbox --copy ",tmpeps," ",f,".eps")
             status <- system(cmd)
+            file.remove(tmpeps)
         }
 
         if (status==0 && clean) {
             if (toeps) {
-                cmd <- paste0("rm ",f,".dvi")
+                file.remove(paste0(f,".dvi"))
             } else {
-                cmd <- paste0("rm ",f,".dvi ",f,".ps")
+                file.remove(paste0(f,c(".dvi",".ps")))
             }
-            system(cmd)
         }
 
     } else if (engine == "pdflatex") {
@@ -106,17 +119,15 @@ ppwrite <- function(p, filename=NULL, topdf=TRUE, crop=FALSE, topng=FALSE, dsf=4
     if (status!=0) return()
 
     if (clean) {
-        cmd <- paste0("rm ",f,".tex ",f,".log ",f,".aux ")
-        system(cmd)
+        file.remove(paste0(f,c(".tex",".log",".aux")))
     }
 
     if (engine == "pdflatex") {
         if (crop || topng) {
-            cmd <- paste0("mv ",f,"-pics.pdf ",f,"-crop.pdf")
+            file.rename(paste0(f,"-pics.pdf"),paste0(f,"-crop.pdf"))
         } else {
-            cmd <- paste0("rm ",f,"-pics.pdf")
+            file.remove(paste0(f,"-pics.pdf"))
         }
-        system(cmd)
     } else if (!toeps) {
         if (crop || topng) {
             cmd <- paste0("pdfcrop ",f, ".pdf")
@@ -125,10 +136,9 @@ ppwrite <- function(p, filename=NULL, topdf=TRUE, crop=FALSE, topng=FALSE, dsf=4
     }
 
     if (topng && !toeps) {
-        cmd <- paste0("gs -q -sDEVICE=png16m -r288 -dDownScaleFactor=",dsf," -dEPSCrop -dNOPAUSE -dBATCH -dALLOWPSTRANSPARENCY -sOutputFile=",f,".png ",f,"-crop.pdf")
+        cmd <- paste0(p$config$gscmd," -q -sDEVICE=png16m -r288 -dDownScaleFactor=",dsf," -dEPSCrop -dNOPAUSE -dBATCH -dALLOWPSTRANSPARENCY -sOutputFile=",f,".png ",f,"-crop.pdf")
         system(cmd)
-        cmd <- paste0("mv ",f,"-crop.pdf ",f,".pdf") # handy for bookdown
-        system(cmd)
+        file.rename(paste0(f,"-crop.pdf"),paste0(f,".pdf")) # handy for bookdown
     }
 
     return()

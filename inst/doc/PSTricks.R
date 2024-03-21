@@ -1,4 +1,4 @@
-## ----include = FALSE----------------------------------------------------------
+## ---- include = FALSE---------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -18,7 +18,7 @@ print(p, "intro-psline", topng=TRUE)
 ## ----echo=FALSE,fig.align="center"--------------------------------------------
 knitr::include_graphics("intro-psline.png")
 
-## ----fig.align="center"-------------------------------------------------------
+## ---- fig.align="center"------------------------------------------------------
 x <- c(4,0,2)
 y <- c(2,1,0)
 
@@ -40,7 +40,7 @@ print(p, "intro-basic", topng=TRUE)
 ## ----echo=FALSE,fig.align="center"--------------------------------------------
 knitr::include_graphics("intro-basic.png")
 
-## ----fig.align="center"-------------------------------------------------------
+## ---- fig.align="center"------------------------------------------------------
 data <- data.frame(x=c(4,0,2),y=c(2,1,0))
 
 PSTricks() %>%

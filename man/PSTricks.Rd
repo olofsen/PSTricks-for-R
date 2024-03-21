@@ -61,6 +61,7 @@ The configuration list may consist of the following items:
 \item paper - The type of paper, for example "a4" or "letter".
 \item pstpkgs - A list of additional PSTricks packages (normally only "pstricks.sty").
 \item tmpdir - The temporary directory for the \code{PSTtoEPS} feature.
+\item gscmd - The name of the Ghostscript executable to use (default "gs").
 }
 }
 \description{

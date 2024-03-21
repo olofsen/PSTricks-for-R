@@ -101,12 +101,14 @@ R CMD INSTALL PSTricks_0.1.0.tar.gz
 This will generate messages about additional R packages that need to be installed.
 
 ### System packages
-The following system packages need to be installed:
+The following system packages may need to be installed:
 
 - texlive-latex-base
 - texlive-pstricks
 - texlive-xelatex if the "xelatex" engine is desired
 - pandoc
+- ghostscript
+- epstool
 
 ## The configuration file
 
@@ -118,6 +120,7 @@ Overrides for defaults may be given, in a file "~/pstricks.yml", for
 - pstpkgs
 - familydefault
 - tmpdir
+- gscmd
 
 These may be likely to have relatively stable values across various
 scripts for a project.
