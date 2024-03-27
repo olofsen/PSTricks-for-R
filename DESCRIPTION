@@ -21,7 +21,7 @@ Imports:
 NeedsCompilation: no
 Packaged: 2023-09-10 20:27:40 UTC; olofsen
 Author: Erik Olofsen [aut, cre]
-Maintainer: Erik Olofsen <e.olofsen@weggetjes.nl>
+Maintainer: Erik Olofsen <pstricks.for.r@weggetjes.nl>
 Suggests:
     knitr,
     rmarkdown,
