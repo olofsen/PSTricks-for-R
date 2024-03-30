@@ -338,6 +338,33 @@ geom_dots <- function(p, mapping=NULL, data=NULL, par=NULL, dodge=0, star=FALSE)
     p
 }
 
+#' Plot Circles
+#' @param p The PSTricks object.
+#' @param mapping Aesthetic mapping from column names to `x` and `y` (and optionally `radius`).
+#' @param data Data frame with properties of the circles.
+#' @param radius Radius of the circles.
+#' @param par PSTricks parameter string.
+#' @param dodge Horizontal offset.
+#' @param star Flag to indicate starred version.
+#' @return The updated PSTricks object.
+#' @seealso [pscircle()] for the base version.
+#' @export
+#' @examples
+#' geom_circle(PSTricks(),data=data.frame(x=c(0,1,2),y=c(1,1,1)),radius=0.2)
+
+geom_circle <- function(p, mapping=NULL, data=NULL, radius=NULL, par=NULL, dodge=0, star=FALSE)
+{
+    name <- cvtname(match.call()[[1]])
+    if (!isa(p,"PSTricks")) stop("first argument is not a PSTricks object")
+
+    p <- ppdefpicture(p)
+
+    g <- structure(list(name=name, mapping=mapping, data=data, radius=radius, par=par, dodge=dodge, star=star),
+                   class=c("geom","geom_xy"))
+    p$geoms <- append(p$geoms,list(g))
+    p
+}
+
 #' Add Text Items
 #' @param p The PSTricks object.
 #' @param mapping Aesthetic mapping from column names to `x` and `y`.
@@ -852,8 +879,10 @@ ppgeoms <- function(p)
 
 ## possibly override limits
 
-    xlimits <- c(sifelse(is.null(p$xlim[1]),xlimits[1],p$xlim[1]), sifelse(is.null(p$xlim[2]),xlimits[2],p$xlim[2]))
-    ylimits <- c(sifelse(is.null(p$ylim[1]),ylimits[1],p$ylim[1]), sifelse(is.null(p$ylim[2]),ylimits[2],p$ylim[2]))
+    xlimits <- c(sifelse(is.null(p$xlim[1])||is.na(p$xlim[1]),xlimits[1],p$xlim[1]),
+                 sifelse(is.null(p$xlim[2])||is.na(p$xlim[2]),xlimits[2],p$xlim[2]))
+    ylimits <- c(sifelse(is.null(p$ylim[1])||is.na(p$ylim[1]),ylimits[1],p$ylim[1]),
+                 sifelse(is.null(p$ylim[2])||is.na(p$ylim[2]),ylimits[2],p$ylim[2]))
 
 ## ppaxis handles equal lower and upper limits
 
@@ -971,6 +1000,14 @@ ppgeoms <- function(p)
                                                   par=sifelse(is.null(par),g$par,par[i]),
                                                   star=sifelse(is.null(star),g$star,star[i]))
             }
+        } else if (name == "geom_circle") {
+            radius <- getvar(p, g, "radius")
+            par <- getvar(p, g, "par")
+            star <- getvar(p, g, "star")
+            for (i in 1:length(x)) p <- pscircle(p, x[i], y[i],
+                                                 radius=sifelse(is.null(radius),g$radius,radius[i]),
+                                                 par=sifelse(is.null(par),g$par,par[i]),
+                                                 star=sifelse(is.null(star),g$star,star[i]))
         } else if (name == "geom_rput") {
             stuff <- getvar(p, g, "stuff")
             if (is.null(stuff)) stop("geom_rput: data item `stuff` not available")

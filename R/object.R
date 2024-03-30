@@ -59,7 +59,7 @@ PSTricks <- function(x=NULL, y=NULL,
     } else {
         config$paper <- paper[1]
     }
-    if (!is.null(packages)) config$packages <- packages
+    if (!is.null(packages)) config$packages <- paste0(config$packages,',',packages)
     if (!is.null(pstpkgs)) config$pstpkgs <- pstpkgs
     if (!is.null(familydefault)) config$familydefault <- familydefault
     config$tmpdir <- sifelse(is.null(config$tmpdir),tmpdir,config$tmpdir)
